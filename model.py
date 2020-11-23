@@ -9,7 +9,7 @@ Reference=NewType("Reference", str)
 class OutOfStock(Exception):
     pass
 
-@dataclass(frozen=True)
+@dataclass(unsafe_hash=True)
 class OrderLine:
     orderid: str
     sku: str
@@ -27,7 +27,7 @@ class Batch:
         return f"<Batch {self.reference}>"
 
     def __eq__(self, other):
-        if not instance(other, Batch):
+        if not isinstance(other, Batch):
             return False
         return other.reference == self.reference
 
