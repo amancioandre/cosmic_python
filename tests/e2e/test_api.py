@@ -105,3 +105,14 @@ def test_unhappy_path_returns_400_and_error_message():
     r = requests.post(f'{url}/allocate', json=data)
     assert r.status_code == 400
     assert r.json()['message'] == f'Invalid sku {unknown_sku}'
+
+@pytest.mark.usefixtures('postgres_db')
+@pytest.mark.usefixtures('restart_api')
+def test_happy_path_returns_201_and_add_batch():
+    sku = random_sku()
+    ref = random_batchref()
+
+    data = {'ref': ref, 'sku': sku, 'qty': 10, 'eta': '2020-01-01'}
+    url = config.get_api_url()
+    r = requests.post(f'{url}/add_batch', json=data)
+    assert r.status_code == 201
