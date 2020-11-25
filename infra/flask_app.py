@@ -6,7 +6,7 @@ from datetime import datetime
 import config
 from domain import model
 from adapters import orm, repository
-from service_layer import services
+from service_layer import services, unit_of_work
 
 orm.start_mappers()
 get_session = sessionmaker(bind=create_engine(config.get_postgres_uri()))
@@ -17,9 +17,8 @@ def allocate_endpoint():
     session = get_session()
     repo = repository.SqlAlchemyRepository(session)
     orderid, sku, qty = request.json['orderid'], request.json['sku'], request.json['qty']
-
     try:
-        batchref = services.allocate(orderid, sku, qty, repo=repo, session=session)
+        batchref = services.allocate(orderid, sku, qty, unit_of_work.SqlAlchemyUnitOfWork())
     except (model.OutOfStock, services.InvalidSku) as e:
         return jsonify({'message': str(e)}), 400
         
@@ -34,6 +33,6 @@ def add_batch():
     if eta is not None:
         eta = datetime.fromisoformat(eta).date()
     services.add_batch(
-        request.json["ref"], request.json["sku"], request.json["qty"], eta, repo, session
+        request.json["ref"], request.json["sku"], request.json["qty"], eta, unit_of_work.SqlAlchemyUnitOfWork()
     )
     return "OK", 201
