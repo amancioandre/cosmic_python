@@ -7,7 +7,7 @@ from sqlalchemy.exc import OperationalError
 from requests.exceptions import ConnectionError
 from pathlib import Path
 
-from orm import metadata, start_mappers
+from adapters.orm import metadata, start_mappers
 import config
 
 @pytest.fixture
