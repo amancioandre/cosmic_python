@@ -68,4 +68,4 @@ def allocate(line: OrderLine, batches: List[Batch]) -> str:
         batch.allocate(line)
         return batch.reference
     except StopIteration:
-        raise OutOfStock(f"Out of stock for sky {line.sku}")
+        raise OutOfStock(f"Out of stock for sku {line.sku}")
