@@ -7,8 +7,8 @@ from sqlalchemy.exc import OperationalError
 from requests.exceptions import ConnectionError
 from pathlib import Path
 
-from adapters.orm import metadata, start_mappers
-import config
+from allocation.adapters.orm import metadata, start_mappers
+from allocation import config
 
 @pytest.fixture
 def in_memory_db():

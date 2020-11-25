@@ -2,7 +2,7 @@ import requests
 import pytest
 import uuid
 
-import config
+from allocation import config
 
 def random_suffix():
     return uuid.uuid4().hex[:6]

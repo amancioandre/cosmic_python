@@ -1,9 +1,9 @@
 import pytest
 from datetime import date, timedelta
 
-from domain import model
-from adapters import repository
-from service_layer import services, unit_of_work
+from allocation.domain import model
+from allocation.adapters import repository
+from allocation.service_layer import services, unit_of_work
 
 today = date.today()
 tomorrow = today + timedelta(days=1)

@@ -2,9 +2,9 @@ from __future__ import annotations
 from typing import Optional
 from datetime import date
 
-from domain import model
-from adapters.repository import AbstractRepository
-from service_layer import unit_of_work
+from allocation.domain import model
+from allocation.adapters.repository import AbstractRepository
+from allocation.service_layer import unit_of_work
 
 class InvalidSku(Exception):
     pass
