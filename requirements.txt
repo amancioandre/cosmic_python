@@ -3,11 +3,11 @@ sqlalchemy
 flask
 psycopg2-binary
 
-# tests
+# dev/tests
 pytest
 pytest-icdiff
 mypy
-requests
-
-# maintainability
 pylint
+requests
+redis
+tenacity

@@ -1,14 +1,17 @@
+# pylint: disable=broad-except
+from __future__ import annotations
 import logging
-from typing import List, Dict, Callable, Type, Union
+from typing import List, Dict, Callable, Type, Union, TYPE_CHECKING
+from allocation.domain import commands, events
+from . import handlers
 
+if TYPE_CHECKING:
+    from . import unit_of_work
 
-from allocation.adapters import email
-from allocation.domain import events, commands
-from . import unit_of_work, handlers
+logger = logging.getLogger(__name__)
 
 Message = Union[commands.Command, events.Event]
 
-logger = logging.getLogger(__name__)
 
 def handle(message: Message, uow: unit_of_work.AbstractUnitOfWork):
     results = []
@@ -39,6 +42,7 @@ def handle_event(
             logger.exception('Exception handling event %s', event)
             continue
 
+
 def handle_command(
     command: commands.Command,
     queue: List[Message],
@@ -56,11 +60,12 @@ def handle_command(
 
 
 EVENT_HANDLERS = {
+    events.Allocated: [handlers.publish_allocated_event],
     events.OutOfStock: [handlers.send_out_of_stock_notification],
-}
+}  # type: Dict[Type[events.Event], List[Callable]]
 
 COMMAND_HANDLERS = {
-    commands.CreateBatch: handlers.add_batch,
     commands.Allocate: handlers.allocate,
+    commands.CreateBatch: handlers.add_batch,
     commands.ChangeBatchQuantity: handlers.change_batch_quantity,
-}
+}  # type: Dict[Type[commands.Command], Callable]

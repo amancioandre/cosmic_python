@@ -1,9 +1,7 @@
-# Test against a functional paradigm for allocating
-import pytest
 from datetime import date, timedelta
-
-from allocation.domain.model import Product, OrderLine, Batch
 from allocation.domain import events
+from allocation.domain.model import Product, OrderLine, Batch
+
 
 today = date.today()
 tomorrow = today + timedelta(days=1)
@@ -44,12 +42,23 @@ def test_returns_allocated_batch_ref():
     assert allocation == in_stock_batch.reference
 
 
-def test_records_out_of_stock_event_if_cannot_allocate():
-    batch = Batch("batch1", "SMALL-FORK", 10, eta=today)
-    product = Product(sku="SMALL-FORK", batches=[batch])
-    product.allocate(OrderLine("order1", "SMALL-FORK", 10))
+def test_outputs_allocated_event():
+    batch = Batch("batchref", "RETRO-LAMPSHADE", 100, eta=None)
+    line = OrderLine("oref", "RETRO-LAMPSHADE", 10)
+    product = Product(sku="RETRO-LAMPSHADE", batches=[batch])
+    product.allocate(line)
+    expected = events.Allocated(
+        orderid="oref", sku="RETRO-LAMPSHADE", qty=10, batchref=batch.reference
+    )
+    assert product.events[-1] == expected
 
-    allocation = product.allocate(OrderLine("order2", "SMALL-FORK", 1))
+
+def test_records_out_of_stock_event_if_cannot_allocate():
+    batch = Batch('batch1', 'SMALL-FORK', 10, eta=today)
+    product = Product(sku="SMALL-FORK", batches=[batch])
+    product.allocate(OrderLine('order1', 'SMALL-FORK', 10))
+
+    allocation = product.allocate(OrderLine('order2', 'SMALL-FORK', 1))
     assert product.events[-1] == events.OutOfStock(sku="SMALL-FORK")
     assert allocation is None
 

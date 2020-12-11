@@ -11,7 +11,7 @@ DEFAULT_SESSION_FACTORY = sessionmaker(bind=create_engine(
 ))
 
 class AbstractUnitOfWork(abc.ABC):
-    products: repository.AbstractProductRepository
+    products: repository.AbstractRepository
 
     def __enter__(self):
         return self
